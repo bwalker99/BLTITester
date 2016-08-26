@@ -1,0 +1,52 @@
+<project name="BLTITester" default="deploy" basedir=".">
+    <description>
+      Basic LTI Consumer and Provider tester
+    </description>
+ 
+    <!-- set global properties for this build -->
+    <property environment="env" />
+    <property file="build.properties" />
+    <property name="app" value="fomidm"/>
+
+  <target name="init">
+    <mkdir dir="${build_dir}"/>
+    <mkdir dir="${dist_dir}"/>  	
+  </target>
+
+    <target name="compile" depends="init" description="Compile files... ">
+        <!-- Compile the java code from ${src_dir} into ${build_dir} -->
+        <!-- debug=true puts line numbers in error stack dumps. Inflates the code but is handy -->
+        <javac srcdir="${src_dir}" destdir="${build_dir}" debug="true"     	
+            classpath="${worklib_dir}/servlet.jar;${lib_dir}/blti-sandwich.jar;${lib_dir}/basiclti-util-1.1.2.jar;${lib_dir}/oauth-1.4.jar;."     	
+            includes="ca/cogomov/lti/provider/*,ca/cogomov/lti/consumer/*" />
+    </target>
+
+  <target name="dist" depends="compile" description="generate the distribution" >
+    <!-- Create war files Provider -->
+    <war destfile="${dist_dir}/bltiprovider.war" webxml="${resources_dir}/provider/web.xml"> 
+	    <classes dir="${build_dir}" includes="ca/cogomov/lti/provider/*.class"/>
+    	<lib dir="${lib_dir}"/>
+    </war>
+
+    <!-- Create war files for Consumer -->
+    <war destfile="${dist_dir}/blticonsumer.war" webxml="${resources_dir}/consumer/web.xml">
+	    <fileset dir="${resources_dir}/consumer" includes="*.jsp,*.jspf,*.html,*.css,*.js"/>
+	    <classes dir="${build_dir}" includes="ca/cogomov/lti/consumer/*.class"/>
+    	<lib dir="${lib_dir}"> </lib>
+    </war>  	
+  </target>
+		
+   <target name="deploy" depends="dist" description="deploy class files to local Tomcat">
+	<echo>Copying war to tomcat webapps</echo>
+	
+	<copy todir="${tomcat_home}/webapps/">
+		<fileset dir="${dist_dir}" includes="*.war"/>
+	</copy>   	
+  </target>
+
+  <target name="clean" description="clean up" >
+	    <delete dir="${build_dir}"/>
+	    <delete dir="${dist_dir}"/>
+  </target>
+	
+</project>
