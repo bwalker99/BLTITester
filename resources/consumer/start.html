@@ -1,10 +1,20 @@
 <html>
-<head><title>BLTI </title>
-</head>
-<body bgcolor="#FFFFFF">
+<head><title>BLTI </title></head>
+<body  style="font-family: Verdana;">
 
-<h3>BLTI - Tester</h3>
-<p>
+<h3>Basic LTI - Tester</h3>
+<p>This utility provides a method of testing both LTI Providers and Consumers. For test purposed they can 
+both be on the same server. For example, to run these test on your own local version of Tomcat: <br/>
+<b>ToolProvider:</b> http://localhost:8080/bltiprovider/login -- the secret is hardcoded to 'mysecret123' 
+<br/>This is the url provided as the default for the launch paramaters below<br/>
+<b>ToolConsumer:</b> http://localhost:8080/blticonsumer/start.html (This page)</p>
+
+<p> To test this consumer to this provider on the same host, follow the example below (change host names if need be). </p>
+
+<p>Other Test Tool Consumers: <a href="http://ltiapps.net/test/tc.php">http://ltiapps.net/test/tc.php</a> 
+<br/>(go to this site and enter <i>http://localhost:8080/bltiprovider/login</i>
+ as the Launch URL and <i>mysecret123</i> as the Shared secret, click 'Save Data', then click 'launch TP')</p>
+ <hr/>
 
 <h3>Client 1 - BB BLTI-Sandwich</h3>
 <form action="bbclient">
