@@ -36,7 +36,7 @@ public class LTIAuthenticate {
 
 		  userid = request.getParameter("user_id");
 		  sourcedid = request.getParameter("lis_person_sourcedid");
-		  sourcedid = request.getParameter("lis_person_name_full");
+		  fullname = request.getParameter("lis_person_name_full");
 		  retval = true;
 		  }
 	  else  {
