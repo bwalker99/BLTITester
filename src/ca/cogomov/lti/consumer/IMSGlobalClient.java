@@ -3,12 +3,16 @@ package ca.cogomov.lti.consumer;
 import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.Map.Entry;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.imsglobal.lti.*;
 import org.imsglobal.lti.launch.*;
+
 import java.io.PrintWriter;
 
 public class IMSGlobalClient  extends HttpServlet {
@@ -69,9 +73,20 @@ public class IMSGlobalClient  extends HttpServlet {
 			LtiSigner ltiSigner = new LtiOauthSigner();
 			
 			try {
-			    Map<String, String> signedParameters = ltiSigner.signParameters(parameters, "ConsumerKey", mysecret, launchsite, "POST");			    
+			    Map<String, String> signedParameters = ltiSigner.signParameters(parameters, "ConsumerKey", mysecret, launchsite, "POST");
+           
+			    // oauth_signature seems to have a CR LF at the end. Remove it.  
+			    /*
+			    String temp = signedParameters.get("oauth_signature");
+			    temp = temp.replace("\n", "");
+			    temp = temp.replace("\r", "");
+				signedParameters.put("oauth_signature", temp) ;  
+				*/
+				// Doesn't seem to help.	  
 			    String output = BasicLTIUtil.postLaunchHTML(signedParameters,launchsite,false);
-				PrintWriter out = response.getWriter();
+
+			    PrintWriter out = response.getWriter();
+				System.out.println(output);
 				out.println(output);
 			}
 			catch (Exception e) {
@@ -80,6 +95,5 @@ public class IMSGlobalClient  extends HttpServlet {
 			    
 		  }
 		  
-
 	}
 

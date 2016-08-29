@@ -84,8 +84,9 @@ public class BBClient  extends HttpServlet {
 			String output = null;
 			Map<String,String> tempmap = new TreeMap<String,String>();
 			for (Map.Entry<String,String> e : launchParams) { 
-				tempmap.put(e.getKey(),e.getValue());
-				System.out.println(e.getKey() + "=" + e.getValue());
+			// possibly remove CR LF from entries. Doesn't seem to help. 	
+			//	tempmap.put(e.getKey(),e.getValue().replace("\n", "").replace("\r", ""));
+				System.out.println(e.getKey() + "=" + tempmap.get(e.getKey()));
 			}
 			output = postLaunchHTML(tempmap, launchsite, false);
 	
