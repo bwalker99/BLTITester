@@ -74,7 +74,18 @@ public class BBClient  extends HttpServlet {
 	    msg.getLaunchPresentation().setReturnUrl("http://localhost:8080/blticonsumer/start.html");
 			    
 	    msg.getContext().setId("99dd04aa5b5e4514815d7122959bc6aa");
-			    			    
+	    
+	    
+	    String temp = request.getParameter("custom_name");
+	    if (temp != null && temp.length() > 0) { 
+	    	String temp2 = request.getParameter("custom_value");
+	    	if (temp2 != null && temp2.length() > 0) {
+	    	    Map<String,String> cparams = msg.getCustomParameters();
+	    	    cparams.put(temp, temp2);
+	    	}
+	    		
+	    }
+	    	    
 			    
 	    BLTIConsumer consumer = new BLTIConsumer( "POST", launchsite,msg );
 	    consumer.sign(mysecret);
@@ -84,8 +95,10 @@ public class BBClient  extends HttpServlet {
 			String output = null;
 			Map<String,String> tempmap = new TreeMap<String,String>();
 			for (Map.Entry<String,String> e : launchParams) { 
-				tempmap.put(e.getKey(),e.getValue());
-				System.out.println(e.getKey() + "=" + e.getValue());
+			// possibly remove CR LF from entries. Doesn't seem to help. 	
+				tempmap.put(e.getKey(),e.getValue().replace("\n", "").replace("\r", ""));
+			//	tempmap.put(e.getKey(),e.getValue());				
+				System.out.println(e.getKey() + "=" + tempmap.get(e.getKey()));
 			}
 			output = postLaunchHTML(tempmap, launchsite, false);
 	
@@ -220,6 +233,7 @@ public class BBClient  extends HttpServlet {
 		                text.append("\n");
 		            }
 		            text.append("</pre>\n");
+/*		            
 		        } else {
 		            // paint auto submit script
 		            text.append(" <script language=\"javascript\"> \n"
@@ -235,7 +249,27 @@ public class BBClient  extends HttpServlet {
 		                            + "	document.getElementById(\"ltiLaunchForm\").appendChild(nei);\n"
 		                            + "	document.ltiLaunchForm.submit(); \n" + " </script> \n");
 		        }
-
+*/
+		        
+	        } else {
+	            // paint auto submit script
+	            text.append(" <script language=\"javascript\"> \n"	            		
+                            + "	document.getElementById(\"ltiLaunchFormSubmitArea\").style.display = \"none\";\n"
+                        /*                            
+	                            + "	nei = document.createElement('input');\n"
+	                            + "	nei.setAttribute('type', 'hidden');\n"
+	                            + "	nei.setAttribute('name', '"
+	                            + BASICLTI_SUBMIT
+	                            + "');\n"
+	                            + "	nei.setAttribute('value', '"
+	                            + newMap.get(BASICLTI_SUBMIT)
+	                            + "');\n"	                            
+	                            + "	document.getElementById(\"ltiLaunchForm\").appendChild(nei);\n"
+                          */	                            
+	                            + "	document.ltiLaunchForm.submit(); \n" + " </script> \n");
+	        }		        
+		        
+		        
 		        String htmltext = text.toString();        
 		        return htmltext;
 		    }
