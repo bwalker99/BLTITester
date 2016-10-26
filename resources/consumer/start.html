@@ -4,17 +4,22 @@
 
 <h2>Basic LTI Tester</h2>
 <p>This utility provides a method of testing both LTI Providers and Consumers. For test purposed they can 
-both be on the same server. 
-<br/>For example, to run these test on your own local version of Tomcat: <br/><br/>
-<b>ToolProvider:</b> http://localhost:8080/bltiprovider/login -- the secret is hardcoded to 'mysecret123' 
-<br/>This is the url provided as the default for the launch paramaters below<br/>
-<b>ToolConsumer:</b> http://localhost:8080/blticonsumer/start.html (This page)</p>
+both be on the same server.<br/><br/> 
+For example, when installed on your own local version of Tomcat: <br/><br/>
+<b>ToolProvider:</b> http://localhost:8080/bltiprovider/login -- the secret is hardcoded to 'mysecret123'. There is no interface. The return will be authentication status and a list of supplied parameters<br/>
+<b>ToolConsumer:</b> http://localhost:8080/blticonsumer/start.html (This page) - To test Tool Provider on localhost, click either one of the submit buttons.</p>
 
-<p> To test this consumer to this provider on the same host, follow the example below (change host names if need be). </p>
 
-<p>Other Test Tool Consumers: <a href="http://ltiapps.net/test/tc.php">http://ltiapps.net/test/tc.php</a> 
-<br/>(go to this site and enter <i>http://localhost:8080/bltiprovider/login</i>
- as the Launch URL and <i>mysecret123</i> as the Shared secret, click 'Save Data', then click 'launch TP')</p>
+
+<p>To test a different Tool Consumers to this Tool Provider: <br/> 
+ - go to <a href="http://ltiapps.net/test/tc.php">http://ltiapps.net/test/tc.php</a> 
+ and enter <i>http://localhost:8080/bltiprovider/login</i>
+ as the Launch URL and <i>mysecret123</i> as the Shared secret, click 'Save Data', then click 'launch TP'</p>
+
+<p>To test a different Tool Provider with this Tool Consumer: <br/> 
+ - Change the 'Launchsite' field to <i>http://ltiapps.net/test/tp.php</i>, and the 'Secret' field to <i>secret</i> and click Submit 
+</p>
+<small>Thanks to Stephen Vickers for the test LTI websites </small> 
  <hr/>
 
 <h3>Client 1 - BB BLTI-Sandwich</h3>
@@ -40,6 +45,11 @@ Custom Parameter - Name: <input type="text" name="custom_name" value="" />
 <input type="submit" value="Submit">
 </form>
 <small><i>Uses IMSGlobal LTI library</i></small>
-<p>Source code available at: https://github.com/bwalker99/BLTITester 
+<p>
+Source code available at: <a href="https://github.com/bwalker99/BLTITester">https://github.com/bwalker99/BLTITester</a> <br/>
+Other references: <a href="https://www.imsglobal.org/learning-tools-interoperability-sample-code">IMSGlobal LTI sample code</a><br/>
+<small>bwalker99@gmail.com</small>
+
+</p>
 </body>
 </html>
