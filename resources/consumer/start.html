@@ -19,14 +19,16 @@ For example, when installed on your own local version of Tomcat: <br/><br/>
 <p>To test a different Tool Provider with this Tool Consumer: <br/> 
  - Change the 'Launchsite' field to <i>http://ltiapps.net/test/tp.php</i>, and the 'Secret' field to <i>secret</i> and click Submit 
 </p>
-<small>Thanks to Stephen Vickers for the test LTI websites </small> 
+<small>Thanks to Stephen Vickers for the test PHP LTI websites </small> 
  <hr/>
 
 <h3>Client 1 - BB BLTI-Sandwich</h3>
 <form action="bbclient">
 Launchsite: <input type="text" name="launchsite" value="http://localhost:8080/bltiprovider/login" size="60"/><br/>
+ConsumerKey: <input type="text" name="consumerkey" value="BLTITesterKey" /><br/>
 Secret: <input type="text" name="mysecret" value="mysecret123" /><br/>
-Userid: <input type="text" name="user_id" value="medstu1" /><br/>
+Userid: <input type="text" name="user_id" value="student1" /><br/>
+Debug: <input type="checkbox" name="debug" value="selected" /><small>(Do not post to Tool Provider. Display parameters only)</small><br/>
 Custom Parameter - Name: <input type="text" name="custom_name" value="" /> 
                    Value:<input type="text" name="custom_value" value="" /><br/>
 
@@ -37,8 +39,10 @@ Custom Parameter - Name: <input type="text" name="custom_name" value="" />
 <h3>Client 2 - IMSGlobal</h3>
 <form action="imsglobalclient"> 
 Launchsite: <input type="text" name="launchsite" value="http://localhost:8080/bltiprovider/login" size="60"/><br/>
+ConsumerKey: <input type="text" name="consumerkey" value="BLTITesterKey" /><br/>
 Secret: <input type="text" name="mysecret" value="mysecret123" /><br/>
-Userid: <input type="text" name="user_id" value="medstu1" /><br/>
+Userid: <input type="text" name="user_id" value="student1" /><br/>
+Debug: <input type="checkbox" name="debug" value="selected" /><small>(Do not post to Tool Provider. Display parameters only)</small><br/>
 Custom Parameter - Name: <input type="text" name="custom_name" value="" /> 
                    Value:<input type="text" name="custom_value" value="" /><br/>
 

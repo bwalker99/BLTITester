@@ -6,6 +6,16 @@ import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
 
+/**
+ * A stub LTI Provider. Does nothing except accept or reject the authentication. 
+ * If authentication works, display the user and other basic information. 
+ * 
+ * This program can be used to as a front end to your own java based LTI Tool Provider
+ * 
+ * @author Bob Walker - bwalker99@gmail.com
+ * 
+ * Thanks to Stephen Vickers at imsglobal(and elsewhere) for his help in developing this application.  
+ */
 public class BBProvider extends HttpServlet {
 	String mysecret = "mysecret123";
 	
@@ -27,12 +37,13 @@ public class BBProvider extends HttpServlet {
 				out.println("<html><head><title>LTI Tester</title></head><body>");
 				out.println("<h3>BLTI Mock Tool Provider</h3>");
 				
-				LTIAuthenticate ltiauth = new LTIAuthenticate(request,mysecret,out);
+				LTIAuthenticate ltiauth = new LTIAuthenticate(request,mysecret);
 				if (ltiauth.authenticate()) { 				
 				    out.println("Successfully authenticated.<br/><br/>");
 					out.println("UserID=" +  ltiauth.getUserid() + "<br/>");
 					out.println("SourcedID=" +  ltiauth.getSourcedid() + "<br/>");
 					out.println("FullName=" +  ltiauth.getFullname() + "<br/>");
+					// ** Forward to your own LTI Tool Provider process here ** 
 				}
 				else {
 				    out.println("**Authentication failed. See webserver log files **<br/>");

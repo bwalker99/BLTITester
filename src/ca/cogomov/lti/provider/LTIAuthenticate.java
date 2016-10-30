@@ -1,26 +1,25 @@
 package ca.cogomov.lti.provider;
 
-import java.io.PrintWriter;
-
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Authenticate from an LTI Tool consumer. 
+ * Authenticate from an LTI Tool consumer.
+ * Used the Blackboard BLTI library for the OAuth authentication. 
+ * There are probably other OAuth libraries than can do this as well. 
+ * @author Bob Walker bwalker99@gmail.com 
  *   
  */
 public class LTIAuthenticate {
   javax.servlet.http.HttpServletRequest request;
-  PrintWriter output;
  
   private String mysecret = null; 
   private String userid;
   private String sourcedid;
   private String fullname;
   
-  public LTIAuthenticate(HttpServletRequest request,String mysecret,PrintWriter output) { 
+  public LTIAuthenticate(HttpServletRequest request,String mysecret) { 
 	  this.request = request;
 	  this.mysecret = mysecret;
-	  this.output = output;
   }
 /**
  * The main authentication method. 
@@ -30,7 +29,6 @@ public class LTIAuthenticate {
 	  boolean retval = false;
 	  	  
 	  blackboard.blti.message.BLTIMessage msg = blackboard.blti.provider.BLTIProvider.getMessage( request );
-	  String key = msg.getKey();
 		  
 	  if ( blackboard.blti.provider.BLTIProvider.isValid( msg, mysecret ) ) { // That's it! Authenticated.
 
@@ -39,9 +37,6 @@ public class LTIAuthenticate {
 		  fullname = request.getParameter("lis_person_name_full");
 		  retval = true;
 		  }
-	  else  {
-		  // output.println("**Authenticated Failed** - Check webserver logfiles for error");
-	  }
      return retval;
   }
   

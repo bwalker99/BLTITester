@@ -1,10 +1,8 @@
 package ca.cogomov.lti.consumer;
 
-
 import java.io.IOException;
 import java.util.Map;
 import java.util.List;
-import java.util.HashMap;
 import java.util.Properties;
 import java.util.TreeMap;
 import java.util.Map.Entry;
@@ -14,20 +12,26 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-//import org.imsglobal.lti.BasicLTIUtil;
-
-
 import java.io.PrintWriter;
 
 import blackboard.blti.message.*;
 import blackboard.blti.consumer.*;
 
-
+/**
+ * A stub java based LTI Consumer. This can be used to write your Tool Consumer
+ * 
+ * This application uses the Blackboard BLTI OAuth library
+ *  
+ * @author Bob Walker bwalker99@gmail.com
+ *
+ */
 public class BBClient  extends HttpServlet {
 	 
-	private static String DEFAULTSECRET = "mysecret123"; 
+	// for testing only
+	private static String DEFAULTSECRET = "mysecret123";  
 	private static String DEFAULTLAUNCHSITE = "http://localhost:8080/bltiprovider/login";
-	private static String DEFAULTUSER = "medstu1";
+	private static String DEFAULTUSER = "student1";
+	private static String DEFAULTCONSUMERKEY = "BLTTesterKey";
 	
     public static final String BASICLTI_SUBMIT = "ext_basiclti_submit";
 	
@@ -42,6 +46,7 @@ public class BBClient  extends HttpServlet {
 		  }
 		  
 	 private void postClient(HttpServletRequest request, HttpServletResponse response) {
+		 boolean debug = false;
 		 String launchsite = request.getParameter("launchsite");
 		 if (launchsite == null || launchsite.length() == 0)
 			 launchsite = DEFAULTLAUNCHSITE;
@@ -54,7 +59,15 @@ public class BBClient  extends HttpServlet {
 		 if (userid == null || userid.length() == 0) 
 			 userid = DEFAULTUSER;
 		 
-	    BLTIMessage msg = new BLTIMessage( "ConsumerKey" );
+		 String consumerkey = request.getParameter("consumerkey");
+		 if (consumerkey == null || consumerkey.length() == 0) 
+			 consumerkey = DEFAULTCONSUMERKEY;
+
+		 String temp = request.getParameter("debug");
+		 if (temp != null && temp.equalsIgnoreCase("selected")) 
+			 debug = true;
+		 		 
+	    BLTIMessage msg = new BLTIMessage(consumerkey);
 	    msg.getResourceLink().setId( "testResourceId" );
 	    msg.getResourceLink().setDescription("Testing LTI with Blackboard library");
 	    msg.getUser().setId(userid);
@@ -76,7 +89,7 @@ public class BBClient  extends HttpServlet {
 	    msg.getContext().setId("99dd04aa5b5e4514815d7122959bc6aa");
 	    
 	    
-	    String temp = request.getParameter("custom_name");
+	   temp = request.getParameter("custom_name");
 	    if (temp != null && temp.length() > 0) { 
 	    	String temp2 = request.getParameter("custom_value");
 	    	if (temp2 != null && temp2.length() > 0) {
@@ -91,28 +104,24 @@ public class BBClient  extends HttpServlet {
 	    consumer.sign(mysecret);
 	    List<Map.Entry<String, String>> launchParams = consumer.getParameters();
 			    
-			System.out.println("====================\nPosting to : " + launchsite);
-			String output = null;
-			Map<String,String> tempmap = new TreeMap<String,String>();
-			for (Map.Entry<String,String> e : launchParams) { 
-			// possibly remove CR LF from entries. Doesn't seem to help. 	
+		String output = null;
+		Map<String,String> tempmap = new TreeMap<String,String>();
+		for (Map.Entry<String,String> e : launchParams) { 
+			// Remove CR LF from entries. Sensitive on .Net Tool Providers 	
 				tempmap.put(e.getKey(),e.getValue().replace("\n", "").replace("\r", ""));
-			//	tempmap.put(e.getKey(),e.getValue());				
-				System.out.println(e.getKey() + "=" + tempmap.get(e.getKey()));
-			}
-			output = postLaunchHTML(tempmap, launchsite, false);
-	
+		}
+			output = postLaunchHTML(tempmap, launchsite, debug);	
 
-			try {
-				PrintWriter out = response.getWriter();
-				out.println(output);
-			}
-			catch (Exception e) {
+		try {
+			PrintWriter out = response.getWriter();
+			out.println(output);
+		}
+		catch (Exception e) {
 				e.printStackTrace();
-			}
+		}
 
 			// showStuff(request);    
-		  }
+	 }
 		  
 
 		  /** 
@@ -169,17 +178,13 @@ public class BBClient  extends HttpServlet {
 		        text.append(endpoint);
 		        text.append("\" name=\"ltiLaunchForm\" id=\"ltiLaunchForm\" method=\"post\" ");
 		        text.append(" encType=\"application/x-www-form-urlencoded\" accept-charset=\"utf-8\">\n");
-//		        text.append(" encType=\"application/x-www-form-urlencoded\">\n");		        
+		        
 		        for (Entry<String, String> entry : newMap.entrySet()) {
 		            String key = entry.getKey();
 		            String value = entry.getValue();
 		            if (value == null) {
 		                continue;
 		            }
-		            // This will escape the contents pretty much - at least
-		            // we will be safe and not generate dangerous HTML
-		     //       key = htmlspecialchars(key);
-		     //       value = htmlspecialchars(value);
 		            if (key.equals(BASICLTI_SUBMIT)) {
 		                text.append("<input type=\"submit\" name=\"");
 		            } else {
@@ -191,10 +196,7 @@ public class BBClient  extends HttpServlet {
 		            text.append("\"/>\n");
 		        }
 		        text.append("</form>\n");
-		        text.append("</div>\n");
-		        
-		        System.out.println("===SoFar===:" + text.toString());
-
+		        text.append("</div>\n");		        
 	        
 		        // Paint the auto-pop up if we are transitioning from https: to http:
 		        // and are not already the top frame...
@@ -225,51 +227,20 @@ public class BBClient  extends HttpServlet {
 		                if (value == null) {
 		                    continue;
 		                }
-		                // text.append(htmlspecialchars(key));
 		                text.append(key);
 		                text.append("=");
-		                // text.append(htmlspecialchars(value));
 		                text.append(value);
 		                text.append("\n");
 		            }
 		            text.append("</pre>\n");
-/*		            
+		        
 		        } else {
-		            // paint auto submit script
-		            text.append(" <script language=\"javascript\"> \n"
-	                            + "	document.getElementById(\"ltiLaunchFormSubmitArea\").style.display = \"none\";\n"
-		                            + "	nei = document.createElement('input');\n"
-		                            + "	nei.setAttribute('type', 'hidden');\n"
-		                            + "	nei.setAttribute('name', '"
-		                            + BASICLTI_SUBMIT
-		                            + "');\n"
-		                            + "	nei.setAttribute('value', '"
-		                            + newMap.get(BASICLTI_SUBMIT)
-		                            + "');\n"
-		                            + "	document.getElementById(\"ltiLaunchForm\").appendChild(nei);\n"
-		                            + "	document.ltiLaunchForm.submit(); \n" + " </script> \n");
-		        }
-*/
-		        
-	        } else {
 	            // paint auto submit script
-	            text.append(" <script language=\"javascript\"> \n"	            		
-                            + "	document.getElementById(\"ltiLaunchFormSubmitArea\").style.display = \"none\";\n"
-                        /*                            
-	                            + "	nei = document.createElement('input');\n"
-	                            + "	nei.setAttribute('type', 'hidden');\n"
-	                            + "	nei.setAttribute('name', '"
-	                            + BASICLTI_SUBMIT
-	                            + "');\n"
-	                            + "	nei.setAttribute('value', '"
-	                            + newMap.get(BASICLTI_SUBMIT)
-	                            + "');\n"	                            
-	                            + "	document.getElementById(\"ltiLaunchForm\").appendChild(nei);\n"
-                          */	                            
-	                            + "	document.ltiLaunchForm.submit(); \n" + " </script> \n");
+		        	text.append(" <script language=\"javascript\"> \n"	            		
+                            + "	document.getElementById(\"ltiLaunchFormSubmitArea\").style.display = \"none\";\n"                                                  
+                            + "	document.ltiLaunchForm.submit(); \n" + " </script> \n");
 	        }		        
-		        
-		        
+		        		        
 		        String htmltext = text.toString();        
 		        return htmltext;
 		    }

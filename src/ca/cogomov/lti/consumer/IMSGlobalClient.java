@@ -10,16 +10,26 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+// included in basiclti-util-1.1.2.jar
 import org.imsglobal.lti.*;
 import org.imsglobal.lti.launch.*;
 
 import java.io.PrintWriter;
 
+/**
+ * A stub java based LTI Consumer. This can be used to write your Tool Consumer
+ * 
+ * This application uses the IMSGlobal tools.
+ *  
+ * @author Bob Walker bwalker99@gmail.com
+ * Thanks to Stephen Vickers at imsglobal(and elsewhere) for his help in developing this application.*
+ */
 public class IMSGlobalClient  extends HttpServlet {
 	
 	private static String DEFAULTSECRET = "mysecret123"; 
 	private static String DEFAULTLAUNCHSITE = "http://localhost:8080/bltiprovider/login";
 	private static String DEFAULTUSER = "medstu1";
+	private static String DEFAULTCONSUMERKEY = "BLTTesterKey";
 	
     public static final String BASICLTI_SUBMIT = "ext_basiclti_submit";
 
@@ -35,7 +45,7 @@ public class IMSGlobalClient  extends HttpServlet {
 		  }
 		  
 		  private void postClient(HttpServletRequest request, HttpServletResponse response) {
-			  		
+		    boolean debug = false;  		
 			String launchsite = request.getParameter("launchsite");   // required
 			if (launchsite == null || launchsite.length() == 0)
 				 launchsite = DEFAULTLAUNCHSITE;
@@ -47,6 +57,14 @@ public class IMSGlobalClient  extends HttpServlet {
 			String userid = request.getParameter("user_id");
 			 if (userid == null || userid.length() == 0) 
 					 userid = DEFAULTUSER;
+			 
+			 String consumerkey = request.getParameter("consumerkey");
+			 if (consumerkey == null || consumerkey.length() == 0) 
+				 consumerkey = DEFAULTCONSUMERKEY;
+
+			 String temp = request.getParameter("debug");
+			 if (temp != null && temp.equalsIgnoreCase("selected")) 
+				 debug = true;			 		 
 				              
              Map<String,String> parameters = new TreeMap<String,String>();
              // Required
@@ -75,10 +93,10 @@ public class IMSGlobalClient  extends HttpServlet {
              parameters.put(BasicLTIConstants.CONTEXT_ID,"99dd04aa5b5e4514815d7122959bc6aa");
    */
              // Required for IMSGlobal implementation
-             parameters.put(BASICLTI_SUBMIT,"something");
+             parameters.put(BASICLTI_SUBMIT,"ClickToProceed");
              
      	    
-     	    String temp = request.getParameter("custom_name");
+     	    temp = request.getParameter("custom_name");
      	    if (temp != null && temp.length() > 0) { 
      	    	String temp2 = request.getParameter("custom_value");
      	    	if (temp2 != null && temp2.length() > 0) {
@@ -90,12 +108,12 @@ public class IMSGlobalClient  extends HttpServlet {
 			LtiSigner ltiSigner = new LtiOauthSigner();
 			
 			try {
-			    Map<String, String> signedParameters = ltiSigner.signParameters(parameters, "ConsumerKey", mysecret, launchsite, "POST");           
+			    Map<String, String> signedParameters = ltiSigner.signParameters(parameters, consumerkey, mysecret, launchsite, "POST");           
 			    // oauth_signature seems to have a CR LF at the end. Remove them.  			    
 				signedParameters.put("oauth_signature", signedParameters.get("oauth_signature").replace("\n","").replace("\r", "")) ;  					 
-			    String output = BasicLTIUtil.postLaunchHTML(signedParameters,launchsite,false);
+			    String output = BasicLTIUtil.postLaunchHTML(signedParameters,launchsite,debug);
 			    PrintWriter out = response.getWriter();
-				System.out.println(output);
+				// System.out.println(output);
 				out.println(output);
 			}
 			catch (Exception e) {
