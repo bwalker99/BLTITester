@@ -31,6 +31,7 @@ public class BBClient  extends HttpServlet {
 	private static String DEFAULTSECRET = "mysecret123";  
 	private static String DEFAULTLAUNCHSITE = "http://localhost:8080/bltiprovider/login";
 	private static String DEFAULTUSER = "student1";
+	private static String DEFAULTNAME = "Test User One";
 	private static String DEFAULTCONSUMERKEY = "BLTTesterKey";
 	
     public static final String BASICLTI_SUBMIT = "ext_basiclti_submit";
@@ -59,6 +60,10 @@ public class BBClient  extends HttpServlet {
 		 if (userid == null || userid.length() == 0) 
 			 userid = DEFAULTUSER;
 		 
+		 String fullname = request.getParameter("full_name");
+		 if (fullname == null || fullname.length() == 0) 
+			 fullname = DEFAULTNAME;
+		 		 
 		 String consumerkey = request.getParameter("consumerkey");
 		 if (consumerkey == null || consumerkey.length() == 0) 
 			 consumerkey = DEFAULTCONSUMERKEY;
@@ -72,7 +77,7 @@ public class BBClient  extends HttpServlet {
 	    msg.getResourceLink().setDescription("Testing LTI with Blackboard library");
 	    msg.getUser().setId(userid);
 	    msg.getUser().setLisSourcedId(userid);
-	    msg.getUser().setFullName( "Test User One" );
+	    msg.getUser().setFullName( fullname );
 	    msg.getUser().addRole( new Role( "Learner" ) );
 			    
 	    msg.getContext().setType("CourseOffering");
@@ -84,10 +89,12 @@ public class BBClient  extends HttpServlet {
 			    
 	    msg.getLaunchPresentation().setDocumentTarget("window");
 	    msg.getLaunchPresentation().setLocale("en_US");
-	    msg.getLaunchPresentation().setReturnUrl("http://localhost:8080/blticonsumer/start.html");
+
+	    temp = request.getRequestURL().toString();
+	    temp = temp.substring(0,temp.lastIndexOf("/")); 	    	    
+	    msg.getLaunchPresentation().setReturnUrl(temp + "/start.html");
 			    
 	    msg.getContext().setId("99dd04aa5b5e4514815d7122959bc6aa");
-	    
 	    
 	   temp = request.getParameter("custom_name");
 	    if (temp != null && temp.length() > 0) { 

@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+
+
 // included in basiclti-util-1.1.2.jar
 import org.imsglobal.lti.*;
 import org.imsglobal.lti.launch.*;
@@ -30,6 +32,7 @@ public class IMSGlobalClient  extends HttpServlet {
 	private static String DEFAULTLAUNCHSITE = "http://localhost:8080/bltiprovider/login";
 	private static String DEFAULTUSER = "medstu1";
 	private static String DEFAULTCONSUMERKEY = "BLTTesterKey";
+	private static String DEFAULTNAME = "Test User One";
 	
     public static final String BASICLTI_SUBMIT = "ext_basiclti_submit";
 
@@ -58,6 +61,10 @@ public class IMSGlobalClient  extends HttpServlet {
 			 if (userid == null || userid.length() == 0) 
 					 userid = DEFAULTUSER;
 			 
+			 String fullname = request.getParameter("full_name");
+			 if (fullname == null || fullname.length() == 0) 
+				 fullname = DEFAULTNAME;			 		 			
+			 
 			 String consumerkey = request.getParameter("consumerkey");
 			 if (consumerkey == null || consumerkey.length() == 0) 
 				 consumerkey = DEFAULTCONSUMERKEY;
@@ -75,7 +82,7 @@ public class IMSGlobalClient  extends HttpServlet {
              // Recommended
              parameters.put(BasicLTIConstants.USER_ID,userid);
              parameters.put(BasicLTIConstants.LIS_PERSON_SOURCEDID,userid);
-             parameters.put(BasicLTIConstants.LIS_PERSON_NAME_FULL,"Tester One" );             
+             parameters.put(BasicLTIConstants.LIS_PERSON_NAME_FULL,fullname);             
              
              // Optional
              /*
